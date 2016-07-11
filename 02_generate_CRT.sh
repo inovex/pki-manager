@@ -31,7 +31,7 @@ do
 Usage: $0 -p projectname -t certype [-n name]
 
   -p projectname
-        
+
         String to identify the project or client. Only used to create a
         distinct folder to separate the generated files. This _projectname_
         won't be used in the generated certificates.
@@ -69,7 +69,8 @@ umask 377
 openssl req \
     -new \
     -newkey rsa:4096 -keyout ${CRT_UID}.key $PASSWD_STRING \
-    -out ${CRT_UID}.csr -subj "/C=${CRT_C:-"FR"}/L=${CRT_L:-"Paris"}/O=${CRT_O:-"Ekino"}/OU=${CRT_OU:-"DevOps"}/CN=${CRT_CN}"
+    -out ${CRT_UID}.csr -subj "/C=${CRT_C:-"FR"}/L=${CRT_L:-"Paris"}/O=${CRT_O:-"Ekino"}/OU=${CRT_OU:-"DevOps"}/CN=${CRT_CN}" \
+    -sha256
 
 # What to do here :
 #  - TRUSTED CA => stop here, then send the generated .csr to your trusted CA
@@ -77,7 +78,7 @@ openssl req \
 if ${CA_ISCUSTOM:-true}
 then
     # .crt
-    openssl x509 -req -days 365 -in ${CRT_UID}.csr -passin file:ca.pass -CA ca.crt -CAkey ca.key -CAserial ca.srl -CAcreateserial -out ${CRT_UID}.crt
+    openssl x509 -req -days 365 -in ${CRT_UID}.csr -passin file:ca.pass -CA ca.crt -CAkey ca.key -CAserial ca.srl -CAcreateserial -out ${CRT_UID}.crt -sha256
 
 
     if [ "$CERTYPE" = "server" ]
